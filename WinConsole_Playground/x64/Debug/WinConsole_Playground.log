@@ -1,0 +1,4 @@
+﻿  WinConsole_Playground.cpp
+D:\Projects\WinConsole_Playground\WinConsole_Playground\WinConsole_Playground.cpp(40,89): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Projects\WinConsole_Playground\WinConsole_Playground\WinConsole_Playground.cpp(44,89): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  WinConsole_Playground.vcxproj -> D:\Projects\WinConsole_Playground\x64\Debug\WinConsole_Playground.exe
