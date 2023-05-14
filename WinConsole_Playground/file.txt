@@ -1,2 +1,3 @@
-hihi
-hoho
+There are several ways to encrypt bytes. 
+One way is to use the Advanced Encryption Standard (AES) algorithm. AES is a block cipher that works on 16-byte (128-bit) blocks. AES can’t work with data smaller or bigger than 16 bytes. Smaller data needs to be padded until they’re 16 bytes, and larger data needs to be split into 16-byte blocks (and, of course, padded when needed). Luckily, 
+there are algorithms that help you achieve just that 

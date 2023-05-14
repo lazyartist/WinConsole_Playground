@@ -8,10 +8,10 @@
 
 bool ReadFile(std::string filename, std::vector<unsigned char>& bytes);
 bool WriteFile(std::string filename, std::vector<unsigned char>& bytes);
+void XOREncrypt(std::vector<unsigned char>& bytes, std::string key);
 
 int main(int argc, char* argv[])
 {
-	// print argc, argv
 	for (int i = 0; i < argc; i++)
 	{
 		std::cout << argv[i] << std::endl;
@@ -23,30 +23,39 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	std::string mode = argv[1];
-	std::string key = argv[2];
-	std::string filename_read = argv[3];
-	std::string filename_write = argv[4];
+	std::string key = argv[1];
+	std::string filename_source = argv[2];
+	std::string filename_encrypt = argv[3];
+	std::string filename_decrypt = argv[4];
 
+	// init blowfish
 	CBLOWFISH blowfish;
-	blowfish.InitKey((unsigned char*)key.c_str(), sizeof(key) / sizeof(key[0]));
+	blowfish.InitKey((unsigned char*)key.c_str(), key.size());
 	
-	std::vector<unsigned char> bytes;
-	if (ReadFile(filename_read, bytes))
+	// encrypt
 	{
-		bool success = false;
-		if ("e" == mode)
+		std::vector<unsigned char> bytes;
+		if (ReadFile(filename_source, bytes))
 		{
-			success = blowfish.EncryptData(bytes.data(), bytes.size(), bytes.data(), bytes.size());
+			//XOREncrypt(bytes, key);
+			bool success = blowfish.EncryptData(bytes.data(), bytes.size(), bytes.data(), bytes.size());
+			
+			if (success)
+			{
+				WriteFile(filename_encrypt, bytes);
+			}
 		}
-		else if ("d" == mode)
-		{
-			success = blowfish.DecryptData(bytes.data(), bytes.size(), bytes.data(), bytes.size());
-		}
+	}
 
-		if (success)
+	// decrypt
+	{
+		std::vector<unsigned char> bytes;
+		if (ReadFile(filename_encrypt, bytes))
 		{
-			WriteFile(filename_write, bytes);
+			bool success = false;
+			blowfish.DecryptData(bytes.data(), bytes.size(), bytes.data(), bytes.size());
+			//XOREncrypt(bytes, key);
+			WriteFile(filename_decrypt, bytes);
 		}
 	}
 
@@ -62,8 +71,8 @@ bool ReadFile(std::string filename, std::vector<unsigned char>& bytes)
 		ifile.seekg(0, std::ios::end);
 		std::streampos size = ifile.tellg();
 		ifile.seekg(0, std::ios::beg);
+
 		bytes.resize(size);
-		// read file to unsigned char bytes
 		ifile.read((char*)bytes.data(), size);
 		ifile.close();
 
@@ -99,4 +108,13 @@ bool WriteFile(std::string filename, std::vector<unsigned char>& bytes)
 
 	std::cout << "Unable to open ofile";
 	return false;
+}
+
+// XOR encrypt function
+void XOREncrypt(std::vector<unsigned char>& bytes, std::string key)
+{
+	for (int i = 0; i < bytes.size(); i++)
+	{
+		bytes[i] = bytes[i] ^ key[i % key.size()];
+	}
 }
